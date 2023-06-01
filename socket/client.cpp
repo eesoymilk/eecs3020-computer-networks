@@ -1,60 +1,62 @@
 #include "common.h"
 
+int createClientSocket();
+Requirement getClientRequirement(std::string&);
+void handleSession(int);
+
 int main()
+{
+    int clientSocket;
+
+    try {
+        clientSocket = createClientSocket();
+    } catch (const std::runtime_error& e) {
+        std::cerr << "An error occurred: " << e.what() << '\n';
+        return -1;
+    }
+
+    handleSession(clientSocket);
+    close(clientSocket);
+
+    return 0;
+}
+
+int createClientSocket()
 {
     int sock;
     sockaddr_in server_addr{};
+
+    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+        throw std::runtime_error("Socket creation error");
+    }
+
+    server_addr.sin_family = PF_INET;
+    server_addr.sin_port = htons(PORT);
+
+    if (inet_pton(AF_INET, SERVER_IP, &server_addr.sin_addr) <= 0) {
+        throw std::runtime_error("Invalid address");
+    }
+
+    if (connect(sock, (struct sockaddr*)&server_addr, sizeof(server_addr)) <
+        0) {
+        throw std::runtime_error("Connection failed");
+    }
+
+    return sock;
+}
+
+void handleSession(int sock)
+{
     Requirement req;
     ssize_t bytesRead;
     std::vector<char> inBuffer(BUFFER_SIZE);
     std::string outBuffer;
 
-    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-        std::cerr << "Socket creation error\n";
-        return -1;
-    }
-
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(PORT);
-
-    if (inet_pton(AF_INET, SERVER_IP, &server_addr.sin_addr) <= 0) {
-        std::cerr << "Invalid address\n";
-        return -1;
-    }
-
-    if (connect(sock, (struct sockaddr *)&server_addr, sizeof(server_addr)) <
-        0) {
-        std::cerr << "Connection failed\n";
-        return -1;
-    }
-
     while (true) {
         bytesRead = read(sock, inBuffer.data(), inBuffer.size());
         std::cout << std::string(inBuffer.data(), bytesRead);
 
-        while (true) {
-            std::getline(std::cin, outBuffer);
-
-            try {
-                int reqPrompt = std::stoi(outBuffer);
-
-                if (!(reqPrompt == static_cast<int>(Requirement::DNS) ||
-                      reqPrompt == static_cast<int>(Requirement::QUERY) ||
-                      reqPrompt == static_cast<int>(Requirement::QUIT))) {
-                    throw std::invalid_argument(std::to_string(reqPrompt));
-                }
-
-                req = static_cast<Requirement>(reqPrompt);
-                break;
-
-            } catch (const std::invalid_argument &ia) {
-                std::cerr << "Invalid argument : " << ia.what() << '\n';
-            } catch (const std::out_of_range &oor) {
-                std::cerr << "Out of range : " << oor.what() << '\n';
-            }
-
-            std::cout << "Re-enter your requirement : ";
-        }
+        req = getClientRequirement(outBuffer);
 
         send(sock, outBuffer.c_str(), outBuffer.size(), 0);
 
@@ -76,8 +78,28 @@ int main()
 
         std::cout << std::string(inBuffer.data(), bytesRead) << "\n\n";
     }
+}
 
-    close(sock);
+Requirement getClientRequirement(std::string& buffer)
+{
+    while (true) {
+        std::getline(std::cin, buffer);
 
-    return 0;
+        try {
+            int reqPrompt = std::stoi(buffer);
+
+            if (!isValidRequirement(reqPrompt)) {
+                throw std::invalid_argument(buffer);
+            }
+
+            return static_cast<Requirement>(reqPrompt);
+
+        } catch (const std::invalid_argument& ia) {
+            std::cerr << "Invalid argument : " << ia.what() << '\n';
+        } catch (const std::out_of_range& oor) {
+            std::cerr << "Out of range : " << oor.what() << '\n';
+        }
+
+        std::cout << "Re-enter your requirement : ";
+    }
 }
