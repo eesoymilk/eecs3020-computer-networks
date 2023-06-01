@@ -6,19 +6,15 @@ void handleSession(int);
 
 int main()
 {
-    int clientSocket;
-
     try {
-        clientSocket = createClientSocket();
+        int clientSocket = createClientSocket();
+        handleSession(clientSocket);
+        close(clientSocket);
+        return 0;
     } catch (const std::runtime_error& e) {
         std::cerr << "An error occurred: " << e.what() << '\n';
         return -1;
     }
-
-    handleSession(clientSocket);
-    close(clientSocket);
-
-    return 0;
 }
 
 int createClientSocket()
@@ -53,6 +49,9 @@ void handleSession(int sock)
     std::string outBuffer;
 
     while (true) {
+        char ack[] = "ack";
+        send(sock, ack, sizeof(ack), 0);
+
         bytesRead = read(sock, inBuffer.data(), inBuffer.size());
         std::cout << std::string(inBuffer.data(), bytesRead);
 

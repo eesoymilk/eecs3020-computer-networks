@@ -16,34 +16,29 @@ emailMap loadEmailDirectory();
 
 int main()
 {
-    int serverSocket;
-    emailMap emailDirectory = loadEmailDirectory();
-
     try {
-        serverSocket = createServerSocket();
+        int serverSocket = createServerSocket();
+        emailMap emailDirectory = loadEmailDirectory();
+        while (true) {
+            int clientSocket;
+
+            std::cout << "Waiting for a connection...\n";
+
+            clientSocket = accept(serverSocket, nullptr, nullptr);
+            if (clientSocket < 0) {
+                throw std::runtime_error("Accept failed");
+            }
+            std::cout << "Connected\n";
+
+            handleClientSession(clientSocket, emailDirectory);
+
+            close(clientSocket);
+        }
+        return 0;
     } catch (const std::runtime_error &e) {
         std::cerr << "An error occurred: " << e.what() << '\n';
         return -1;
     }
-
-    while (true) {
-        int clientSocket;
-
-        std::cout << "Waiting for a connection...\n";
-
-        clientSocket = accept(serverSocket, nullptr, nullptr);
-        if (clientSocket < 0) {
-            std::cerr << "accept failed\n";
-            return -1;
-        }
-        std::cout << "Connected\n";
-
-        handleClientSession(clientSocket, emailDirectory);
-
-        close(clientSocket);
-    }
-
-    return 0;
 }
 
 emailMap loadEmailDirectory()
@@ -65,7 +60,6 @@ int createServerSocket()
 {
     int sock;
     sockaddr_in address{};
-    emailMap emailDirectory;
 
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
         throw std::runtime_error("Socket creation failed");
@@ -97,6 +91,9 @@ void handleClientSession(int sock, const emailMap &emailDirectory)
     std::string outBuffer;
 
     while (true) {
+        char ack[4];
+        read(sock, ack, sizeof(ack));
+
         std::cout << "Waiting for a requirement...\n";
         outBuffer = "What's your requirement? 1. DNS 2. QUERY 3. QUIT : ";
         send(sock, outBuffer.c_str(), outBuffer.size(), 0);
@@ -161,12 +158,11 @@ void getIpAddress(std::string url, std::string &buffer)
         struct sockaddr_in *ipv4 = (struct sockaddr_in *)res->ai_addr;
         inet_ntop(res->ai_family, &(ipv4->sin_addr), ipstr, sizeof(ipstr));
         buffer = std::string(ipstr);
+        freeaddrinfo(res);
     } else {
-        std::cerr << "getaddrinfo: " << gai_strerror(status) << '\n';
+        std::cerr << "getaddrinfo : " << gai_strerror(status) << '\n';
         buffer = "Error resolving URL";
     }
-
-    freeaddrinfo(res);
 }
 
 void getStudentEmail(const emailMap &emailDirectory, std::string sid,
