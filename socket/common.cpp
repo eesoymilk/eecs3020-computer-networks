@@ -9,8 +9,8 @@ bool isValidRequirement(int r)
 
 std::string readAsString(int sock)
 {
-    std::vector<char> inBuffer(BUFFER_SIZE);
-    ssize_t bytesRead = read(sock, inBuffer.data(), inBuffer.size());
+    std::vector<char> buffer(BUFFER_SIZE);
+    ssize_t bytesRead = read(sock, buffer.data(), buffer.size());
 
     if (bytesRead == -1) {
         throw std::system_error(errno, std::generic_category(),
@@ -20,7 +20,7 @@ std::string readAsString(int sock)
         throw std::runtime_error("Connection closed by peer");
     }
 
-    return std::string(inBuffer.data(), bytesRead);
+    return std::string(buffer.data(), bytesRead);
 }
 
 void sendString(int sock, std::string str)
