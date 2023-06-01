@@ -1,10 +1,10 @@
 # A Simple TCP Socket Implementation
 
-This repository contains a simple implementation of a TCP socket communication program. It was developed as the final project for the EECS3020 Introduction to Computer Networks course.
+This repository contains a simple implementation of **a TCP socket communication program**. It was developed as the final project for the **EECS3020 Introduction to Computer Networks** course.
 
 ## Compilation
 
-There are two options to compile the source code: using the provided Makefile or compiling manually.
+There are two options to compile the source code: using the provided `Makefile` or compiling manually.
 
 ### Option 1: Using `Makefile`
 
