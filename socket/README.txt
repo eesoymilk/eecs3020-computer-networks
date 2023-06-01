@@ -6,7 +6,7 @@ This repository hosts the codebase for a simple, yet robust, TCP socket communic
 
 The project's directory structure and file descriptions are as follows:
 
-- `common.h`: A shared header file containing utilities and constants used across the application.
+- `common.h` and `common.cpp`: Shared header and source files containing utilities and functions used across the application.
 
 - `server.cpp`: The implementation of the server-side operations of the TCP communication application.
 
@@ -28,13 +28,13 @@ You have two options for compiling the source code: using the provided `Makefile
 
 ### Option 1: Using `Makefile`
 
-Run the following command to compile both `client.cpp` and `server.cpp` into respective executables, `client` and `server`:
+Run the following command to compile `common.cpp`, `client.cpp`, and `server.cpp` into respective object files and executables:
 
 ```bash
 make
 ```
 
-To clean up the directory and remove the compiled executables, use:
+To clean up the directory and remove the compiled object files and executables, use:
 
 ```bash
 make clean
@@ -42,11 +42,12 @@ make clean
 
 ### Option 2: Manual Compilation
 
-If you choose to compile manually, use the following commands to compile the server and client programs:
+If you choose to compile manually, use the following commands to compile the common functions, server, and client programs:
 
 ```bash
-g++ -std=c++11  -Wall -Wextra -pedantic server.cpp -o server
-g++ -std=c++11  -Wall -Wextra -pedantic client.cpp -o client
+g++ -std=c++11 -Wall -Wextra -pedantic -c common.cpp -o common.o
+g++ -std=c++11 -Wall -Wextra -pedantic server.cpp common.o -o server
+g++ -std=c++11 -Wall -Wextra -pedantic client.cpp common.o -o client
 ```
 
 Please note that this code must be compiled with **the C++11 standard or later** due to the usage of certain features such as **enum class**. You can use the -std flag to specify the C++ standard (e.g., `-std=c++11`, `-std=c++14`, `-std=c++17`, `-std=c++20`, or `-std=c++2b` for the latest features as of 2023).
