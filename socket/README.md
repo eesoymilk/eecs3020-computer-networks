@@ -1,40 +1,40 @@
 # A Simple TCP Socket Implementation
 
-This repository contains a simple implementation of **a TCP socket communication program**. It was developed as the final project for the **EECS3020 Introduction to Computer Networks** course.
+This repository hosts the codebase for a simple, yet robust, TCP socket communication program. The project was developed as a culmination of learnings from the course "**EECS3020: Introduction to Computer Networks**".
 
 ## Project Structure
 
-The project directory consists of the following files:
+The project's directory structure and file descriptions are as follows:
 
-- `common.h`: This header file contains common utilities shared between `server.cpp` and `client.cpp`.
+- `common.h`: A shared header file containing utilities and constants used across the application.
 
-- `server.cpp`: This file contains the source code for the server side of the application.
+- `server.cpp`: The implementation of the server-side operations of the TCP communication application.
 
-- `client.cpp`: This file contains the source code for the client side of the application.
+- `client.cpp`: The implementation of the client-side operations of the TCP communication application.
 
-- `query.txt`: This file serves as a simple database for storing students' email information.
+- `query.txt`: A mock database file for storing students' email information. It serves as a data source for one of the operations provided by the server.
 
-- `Makefile`: The `Makefile` provides the compilation configuration for the project.
-    
-- `.clang-format`: This file is used to auto-format the C/C++ source code for consistent code style.
+- `Makefile`: Provides the configuration required to compile the project. Using Makefile simplifies the compilation process and ensures consistent build behaviors.
 
-- `README.md` and `README.txt`: The `README.md` file contains the project documentation in Markdown, while `README.txt` provides the same documentation in plain text format.
+- `.clang-format`: Used to automatically format C/C++ source code for maintaining consistent code style across the project.
 
-Please note that additional details and functionality of the project exist within the individual source code files.
+- `README.md` and `README.txt`: These files provide the project's documentation. `README.md` is a Markdown version for easy reading on platforms like GitHub, while `README.txt` is a plain text version for general use.
+
+Detailed information regarding the functionality of the project is included within comments in the individual source code files.
 
 ## Compilation
 
-There are two options to compile the source code: using the provided `Makefile` or compiling manually.
+You have two options for compiling the source code: using the provided `Makefile` or compiling manually.
 
 ### Option 1: Using `Makefile`
 
-To compile both `client.cpp` and `server.cpp` into executables named `client` and `server`, simply run the following command:
+Run the following command to compile both `client.cpp` and `server.cpp` into respective executables, `client` and `server`:
 
 ```bash
 make
 ```
 
-To clean the directory and remove the compiled executables, use the following command:
+To clean up the directory and remove the compiled executables, use:
 
 ```bash
 make clean
@@ -42,31 +42,33 @@ make clean
 
 ### Option 2: Manual Compilation
 
-If you prefer to compile manually, you can use the following commands:
+If you choose to compile manually, use the following commands to compile the server and client programs:
 
 ```bash
-g++ -Wall -Wextra -pedantic server.cpp -o server
-g++ -Wall -Wextra -pedantic client.cpp -o client
+g++ -std=c++11  -Wall -Wextra -pedantic server.cpp -o server
+g++ -std=c++11  -Wall -Wextra -pedantic client.cpp -o client
 ```
+
+Please note that this code must be compiled with **the C++11 standard or later** due to the usage of certain features such as **enum class**. You can use the -std flag to specify the C++ standard (e.g., `-std=c++11`, `-std=c++14`, `-std=c++17`, `-std=c++20`, or `-std=c++2b` for the latest features as of 2023).
 
 ## Usage
 
-### Server terminal
+### Starting the Server
 
-In a terminal window, execute the following command:
+To start the server, execute the following command in a terminal window:
 
 ```
 ./server
 ```
 
-This will start the server and listen for incoming client connections.
+The server will start and wait for incoming client connections.
 
-### Client terminal
+### Starting the Client
 
-In a separate terminal window, execute the following command:
+To start the client, open a separate terminal window and execute the following command:
 
 ```bash
 ./client
 ```
 
-This will start the client and establish a connection to the server. You can use this client terminal to send and receive data through the socket.
+The client program will start, establish a connection to the server, and you can then interact with the server through this client terminal.
