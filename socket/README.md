@@ -5,13 +5,13 @@ EECS3020 Introduction to Computer Networks Final Project
 
 ### Option 1 : `Makefile`
 
-Just use `make` command to compile both `client.cpp` and `server.cpp` into executables `client` and `server`.
+Just use `make` command to compile both `client.cpp` and `server.cpp` into executables `client` and `server` as follows:
 
 ```
 make
 ```
 
-#### You can clear the executable using the following command:
+You can clear the executable using the following command:
 
 ```
 make clean
