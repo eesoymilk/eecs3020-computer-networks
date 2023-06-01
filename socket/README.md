@@ -2,6 +2,26 @@
 
 This repository contains a simple implementation of **a TCP socket communication program**. It was developed as the final project for the **EECS3020 Introduction to Computer Networks** course.
 
+## Project Structure
+
+The project directory consists of the following files:
+
+- `common.h`: This header file contains common utilities shared between `server.cpp` and `client.cpp`.
+
+- `server.cpp`: This file contains the source code for the server side of the application.
+
+- `client.cpp`: This file contains the source code for the client side of the application.
+
+- `query.txt`: This file serves as a simple database for storing students' email information.
+
+- `Makefile`: The `Makefile` provides the compilation configuration for the project.
+    
+- `.clang-format`: This file is used to auto-format the C/C++ source code for consistent code style.
+
+- `README.md` and `README.txt`: The `README.md` file contains the project documentation in Markdown, while `README.txt` provides the same documentation in plain text format.
+
+Please note that additional details and functionality of the project exist within the individual source code files.
+
 ## Compilation
 
 There are two options to compile the source code: using the provided `Makefile` or compiling manually.
