@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <string>
+#include <system_error>
 #include <vector>
 
 constexpr int PORT = 1234;
@@ -16,9 +17,10 @@ constexpr char SERVER_IP[] = "127.0.0.1";
 enum class Requirement { DNS = 1, QUERY = 2, QUIT = 3 };
 
 // Returns true if the given int corresponds to a valid Requirement
-inline bool isValidRequirement(int r)
-{
-    return r == static_cast<int>(Requirement::DNS) ||
-           r == static_cast<int>(Requirement::QUERY) ||
-           r == static_cast<int>(Requirement::QUIT);
-}
+bool isValidRequirement(int r);
+
+// Read from the socket and convert the result into std::string
+std::string readAsString(int);
+
+// Send a std::string to the socket
+void sendString(int, std::string);

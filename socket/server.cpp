@@ -40,7 +40,11 @@ int main()
             }
             std::cout << "Connected\n";
 
-            handleClientSession(clientSocket, emailDirectory);
+            try {
+                handleClientSession(clientSocket, emailDirectory);
+            } catch (const std::runtime_error &e) {
+                std::cerr << "An error occurred: " << e.what() << '\n';
+            }
 
             close(clientSocket);
         }
@@ -96,60 +100,51 @@ int createServerSocket()
 void handleClientSession(int sock, const EmailMap &emailDirectory)
 {
     Requirement req;
-    ssize_t bytesRead;
-    std::vector<char> inBuffer(BUFFER_SIZE);
-    std::string outBuffer;
+    std::string buffer;
 
     while (true) {
-        char ack[4];
-        read(sock, ack, sizeof(ack));
+        readAsString(sock);
 
         std::cout << "Waiting for a requirement...\n";
-        outBuffer = "What's your requirement? 1. DNS 2. QUERY 3. QUIT : ";
-        send(sock, outBuffer.c_str(), outBuffer.size(), 0);
-        bytesRead = read(sock, inBuffer.data(), inBuffer.size());
+        sendString(sock, "What's your requirement? 1. DNS 2. QUERY 3. QUIT : ");
 
-        req = static_cast<Requirement>(
-            std::stoi(std::string(inBuffer.data(), bytesRead)));
+        req = static_cast<Requirement>(std::stoi(readAsString(sock)));
 
         if (req == Requirement::DNS) {
             std::string url;
 
             std::cout << "Handling DNS...\n";
 
-            outBuffer = "Input URL address : ";
-            std::cout << outBuffer;
-            send(sock, outBuffer.c_str(), outBuffer.size(), 0);
+            buffer = "Input URL address : ";
+            std::cout << buffer;
+            sendString(sock, buffer);
 
-            bytesRead = read(sock, inBuffer.data(), inBuffer.size());
-
-            url = std::string(inBuffer.data(), bytesRead);
+            url = readAsString(sock);
             std::cout << url << '\n';
 
-            resolveIpAddress(url, outBuffer);
-            std::cout << "IP address : " << outBuffer << '\n';
+            resolveIpAddress(url, buffer);
+            std::cout << "IP address : " << buffer << '\n';
         } else if (req == Requirement::QUERY) {
             std::string sid;
 
             std::cout << "Handling QUERY...\n";
 
-            outBuffer = "Input student ID : ";
-            std::cout << outBuffer;
-            send(sock, outBuffer.c_str(), outBuffer.size(), 0);
+            buffer = "Input student ID : ";
+            std::cout << buffer;
+            sendString(sock, buffer);
 
-            bytesRead = read(sock, inBuffer.data(), inBuffer.size());
-            sid = std::string(inBuffer.data(), bytesRead);
+            sid = readAsString(sock);
             std::cout << sid << '\n';
 
-            getStudentEmail(emailDirectory, sid, outBuffer);
+            getStudentEmail(emailDirectory, sid, buffer);
 
-            std::cout << "Student's email : " << outBuffer << '\n';
+            std::cout << "Student's email : " << buffer << '\n';
         } else {
             std::cout << "Quitting...\n";
             break;
         }
 
-        send(sock, outBuffer.c_str(), outBuffer.size(), 0);
+        sendString(sock, buffer);
     }
 }
 

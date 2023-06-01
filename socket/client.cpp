@@ -52,30 +52,24 @@ int createClientSocket()
 void handleSession(int sock)
 {
     Requirement req;
-    ssize_t bytesRead;
-    std::vector<char> inBuffer(BUFFER_SIZE);
-    std::string outBuffer;
+    std::string buffer;
 
     while (true) {
-        char ack[] = "ack";
-        send(sock, ack, sizeof(ack), 0);
+        sendString(sock, "ack");
 
-        bytesRead = read(sock, inBuffer.data(), inBuffer.size());
-        std::cout << std::string(inBuffer.data(), bytesRead);
+        std::cout << readAsString(sock);
 
-        req = getClientRequirement(outBuffer);
+        req = getClientRequirement(buffer);
 
-        send(sock, outBuffer.c_str(), outBuffer.size(), 0);
+        sendString(sock, buffer);
 
         if (req == Requirement::QUIT) {
             break;
         }
 
-        bytesRead = read(sock, inBuffer.data(), inBuffer.size());
-        std::cout << std::string(inBuffer.data(), bytesRead);
-        std::getline(std::cin, outBuffer);
-        send(sock, outBuffer.c_str(), outBuffer.size(), 0);
-        bytesRead = read(sock, inBuffer.data(), inBuffer.size());
+        std::cout << readAsString(sock);
+        std::getline(std::cin, buffer);
+        sendString(sock, buffer);
 
         if (req == Requirement::DNS) {
             std::cout << "address get from domain name : ";
@@ -83,7 +77,7 @@ void handleSession(int sock)
             std::cout << "Email get from server : ";
         }
 
-        std::cout << std::string(inBuffer.data(), bytesRead) << "\n\n";
+        std::cout << readAsString(sock) << "\n\n";
     }
 }
 
