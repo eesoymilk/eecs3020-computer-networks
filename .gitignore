@@ -65,5 +65,5 @@ octave-workspace
 *.exe
 *.out
 *.app
-socket/server
-socket/client
+server
+client
