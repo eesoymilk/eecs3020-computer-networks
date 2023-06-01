@@ -1,17 +1,25 @@
 #include "common.h"
 
+// Creates a client socket and attempts to connect to the server
 int createClientSocket();
+
+// Prompts the user to input a Requirement and validates the input
 Requirement getClientRequirement(std::string&);
+
+// Handles the main communication session with the server
 void handleSession(int);
 
 int main()
 {
     try {
         int clientSocket = createClientSocket();
+
         handleSession(clientSocket);
         close(clientSocket);
+
         return 0;
     } catch (const std::runtime_error& e) {
+        // In case of any exceptions, print the error message and return -1
         std::cerr << "An error occurred: " << e.what() << '\n';
         return -1;
     }

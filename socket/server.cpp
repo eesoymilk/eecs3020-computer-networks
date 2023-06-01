@@ -6,19 +6,29 @@
 
 #include "common.h"
 
-using emailMap = std::unordered_map<std::string, std::string>;
+using EmailMap = std::unordered_map<std::string, std::string>;
 
+// Creates a server socket and starts listening for connections
 int createServerSocket();
-void handleClientSession(int, const emailMap &);
-void getIpAddress(std::string, std::string &);
-void getStudentEmail(const emailMap &, std::string, std::string &);
-emailMap loadEmailDirectory();
+
+// Handles a client session, serving DNS and QUERY requests
+void handleClientSession(int, const EmailMap &);
+
+// Resolves a given URL to an IP address
+void resolveIpAddress(std::string, std::string &);
+
+// Retrieves a student's email from the email directory based on their ID
+void getStudentEmail(const EmailMap &, std::string, std::string &);
+
+// Loads a file with student IDs and their corresponding emails
+EmailMap loadEmailDirectory();
 
 int main()
 {
     try {
         int serverSocket = createServerSocket();
-        emailMap emailDirectory = loadEmailDirectory();
+        EmailMap emailDirectory = loadEmailDirectory();
+
         while (true) {
             int clientSocket;
 
@@ -41,9 +51,9 @@ int main()
     }
 }
 
-emailMap loadEmailDirectory()
+EmailMap loadEmailDirectory()
 {
-    emailMap emailDirectory;
+    EmailMap emailDirectory;
     std::ifstream file("query.txt");
     std::string sid, email;
 
@@ -83,7 +93,7 @@ int createServerSocket()
     return sock;
 }
 
-void handleClientSession(int sock, const emailMap &emailDirectory)
+void handleClientSession(int sock, const EmailMap &emailDirectory)
 {
     Requirement req;
     ssize_t bytesRead;
@@ -116,7 +126,7 @@ void handleClientSession(int sock, const emailMap &emailDirectory)
             url = std::string(inBuffer.data(), bytesRead);
             std::cout << url << '\n';
 
-            getIpAddress(url, outBuffer);
+            resolveIpAddress(url, outBuffer);
             std::cout << "IP address : " << outBuffer << '\n';
         } else if (req == Requirement::QUERY) {
             std::string sid;
@@ -143,7 +153,7 @@ void handleClientSession(int sock, const emailMap &emailDirectory)
     }
 }
 
-void getIpAddress(std::string url, std::string &buffer)
+void resolveIpAddress(std::string url, std::string &buffer)
 {
     int status;
     struct addrinfo hints {
@@ -165,10 +175,10 @@ void getIpAddress(std::string url, std::string &buffer)
     }
 }
 
-void getStudentEmail(const emailMap &emailDirectory, std::string sid,
+void getStudentEmail(const EmailMap &emailDirectory, std::string sid,
                      std::string &buffer)
 {
-    emailMap::const_iterator it;
+    EmailMap::const_iterator it;
 
     if ((it = emailDirectory.find(sid)) != emailDirectory.end()) {
         buffer = it->second;
