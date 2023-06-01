@@ -28,7 +28,6 @@ void sendString(int sock, std::string str)
     size_t bytesSent = 0;
     ssize_t currentBytesSent;
 
-    // While we haven't sent everything
     while (bytesSent < str.size()) {
         currentBytesSent =
             send(sock, str.c_str() + bytesSent, str.size() - bytesSent, 0);
